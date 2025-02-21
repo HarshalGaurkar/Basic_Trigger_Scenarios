@@ -1,0 +1,13 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 21/02/2025
+Use_Case: If an Opportunity is marked as Closed Won, its Close Date should be updated to the current date.
+*/
+
+trigger AutoCloseOpportunity on Opportunity (before update) {
+    for (Opportunity opp : Trigger.new) {
+        if (opp.StageName == 'Closed Won' && opp.CloseDate == null) {
+            opp.CloseDate = Date.today();
+        }
+    }
+}
