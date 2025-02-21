@@ -1,0 +1,25 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 21/02/2025
+Use_Case: If a Case is escalated, send an email notification to the case owner.
+*/
+
+trigger SendEmailOnCaseEscalation on Case (after update) {
+    List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+    
+    for (Case cs : Trigger.new) {
+        Case oldCase = Trigger.oldMap.get(cs.Id);
+        
+        if (!oldCase.IsEscalated && cs.IsEscalated) {
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            mail.setToAddresses(new String[]{cs.Owner.Email});
+            mail.setSubject('Case Escalation Alert');
+            mail.setPlainTextBody('Your case ' + cs.CaseNumber + ' has been escalated.');
+            emails.add(mail);
+        }
+    }
+    
+    if (!emails.isEmpty()) {
+        Messaging.sendEmail(emails);
+    }
+}
