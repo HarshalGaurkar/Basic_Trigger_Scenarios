@@ -1,0 +1,30 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 21/02/2025
+Use_Case: Whenever a Contact is created, it should inherit the Billing Address from the associated Account.
+*/
+
+trigger PopulateContactAddress on Contact (before insert, before update) {
+    Set<Id> accountIds = new Set<Id>();
+    
+    for (Contact con : Trigger.new) {
+        if (con.AccountId != null) {
+            accountIds.add(con.AccountId);
+        }
+    }
+    
+    Map<Id, Account> accountMap = new Map<Id, Account>(
+        [SELECT Id, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry FROM Account WHERE Id IN :accountIds]
+    );
+    
+    for (Contact con : Trigger.new) {
+        if (con.AccountId != null && accountMap.containsKey(con.AccountId)) {
+            Account acc = accountMap.get(con.AccountId);
+            con.MailingStreet = acc.BillingStreet;
+            con.MailingCity = acc.BillingCity;
+            con.MailingState = acc.BillingState;
+            con.MailingPostalCode = acc.BillingPostalCode;
+            con.MailingCountry = acc.BillingCountry;
+        }
+    }
+}
