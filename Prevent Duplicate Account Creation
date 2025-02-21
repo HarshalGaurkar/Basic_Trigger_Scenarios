@@ -1,3 +1,9 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 21/02/2025
+Use_Case: A business wants to prevent users from creating duplicate Account records with the same Name.
+*/
+
 trigger PreventDuplicateAccounts on Account (before insert) {
     Set<String> accountNames = new Set<String>();
     for (Account acc : Trigger.new) {
