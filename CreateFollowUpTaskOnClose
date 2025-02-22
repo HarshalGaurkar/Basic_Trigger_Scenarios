@@ -1,0 +1,29 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: When an Opportunity is closed (Won or Lost), a follow-up task should be created for the Account Owner.
+*/
+
+trigger CreateFollowUpTaskOnClose on Opportunity (after update) {
+    List<Task> tasks = new List<Task>();
+
+    for (Opportunity opp : Trigger.new) {
+        if ((opp.StageName == 'Closed Won' || opp.StageName == 'Closed Lost') &&
+            Trigger.oldMap.get(opp.Id).StageName != opp.StageName) {
+            
+            Task newTask = new Task(
+                Subject = 'Follow-up on Closed Opportunity',
+                WhatId = opp.Id,
+                OwnerId = opp.OwnerId,
+                DueDate = Date.today().addDays(7),
+                Status = 'Not Started',
+                Priority = 'High'
+            );
+            tasks.add(newTask);
+        }
+    }
+
+    if (!tasks.isEmpty()) {
+        insert tasks;
+    }
+}
