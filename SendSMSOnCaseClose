@@ -1,0 +1,24 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: When a support case is resolved, the customer should receive a notification via SMS (or email) informing them that their case has been closed. This improves customer communication and service quality.
+*/
+
+trigger SendSMSOnCaseClose on Case (after update) {
+    List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+    for (Case cs : Trigger.new) {
+        Case oldCs = Trigger.oldMap.get(cs.Id);
+        if (cs.Status == 'Closed' && oldCs.Status != 'Closed') {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new List<String>{cs.ContactEmail});
+            email.setSubject('Your Case has been Closed');
+            email.setPlainTextBody('Dear Customer, your case ' + cs.CaseNumber + ' has been closed.');
+            emails.add(email);
+        }
+    }
+    
+    if (!emails.isEmpty()) {
+        Messaging.sendEmail(emails);
+    }
+}
