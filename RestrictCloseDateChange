@@ -1,0 +1,16 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case:  A Business want to restric the user to change the close date when stagename is closed won.
+*/
+
+trigger RestrictCloseDateChange on Opportunity (before update) {
+    for (Opportunity opp : Trigger.new) {
+        Opportunity oldOpp = Trigger.oldMap.get(opp.Id);
+        if (oldOpp.StageName == 'Closed Won' && opp.CloseDate != oldOpp.CloseDate) {
+            opp.addError('Close Date cannot be changed once the opportunity is Closed Won.');
+        }
+    }
+}
+
+
