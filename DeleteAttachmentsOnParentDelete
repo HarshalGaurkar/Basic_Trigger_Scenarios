@@ -1,0 +1,18 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: If a Case, Opportunity, or Account is deleted, all related attachments should also be deleted to free up storage space.
+*/
+
+trigger DeleteAttachmentsOnParentDelete on Case (after delete) {
+    List<Attachment> attachmentsToDelete = new List<Attachment>();
+
+    for (Case cs : Trigger.old) {
+        attachmentsToDelete.addAll([SELECT Id FROM Attachment WHERE ParentId = :cs.Id]);
+    }
+
+    if (!attachmentsToDelete.isEmpty()) {
+        delete attachmentsToDelete;
+    }
+}
+//Note: You can modify this to include Opportunity or Account by adding similar queries
