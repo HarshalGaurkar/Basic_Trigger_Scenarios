@@ -1,0 +1,13 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: Users should not be able to upload a file larger than 10MB to prevent excessive storage usage 
+*/
+
+trigger PreventLargeFileUpload on ContentVersion (before insert) {
+    for (ContentVersion cv : Trigger.new) {
+        if (cv.ContentSize > 10485760) { // 10MB in bytes
+            cv.addError('File size exceeds the allowed limit of 10MB.');
+        }
+    }
+}
