@@ -1,0 +1,24 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case:  When a file is uploaded to a high-value Opportunity (>$100K) or a Priority Case, notify the record owner via email
+*/
+
+trigger NotifyFileUploadToImportantRecord on ContentDocumentLink (after insert) {
+    List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+    for (ContentDocumentLink cdl : Trigger.new) {
+        Opportunity opp = [SELECT Id, Owner.Email, Amount FROM Opportunity WHERE Id = :cdl.LinkedEntityId LIMIT 1];
+        if (opp.Amount >= 100000) {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new List<String>{opp.Owner.Email});
+            email.setSubject('A new file was uploaded to your Opportunity');
+            email.setPlainTextBody('A file has been uploaded to your Opportunity: ' + opp.Id);
+            emails.add(email);
+        }
+    }
+
+    if (!emails.isEmpty()) {
+        Messaging.sendEmail(emails);
+    }
+}
