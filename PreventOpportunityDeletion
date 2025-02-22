@@ -1,0 +1,20 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: Opportunities often have related Quotes. To maintain data integrity, users should not be allowed to delete an Opportunity if it has related Quotes. 
+*/
+
+trigger PreventOpportunityDeletion on Opportunity (before delete) {
+    Set<Id> oppIds = new Set<Id>();
+    for (Opportunity opp : Trigger.old) {
+        oppIds.add(opp.Id);
+    }
+
+    List<Quote> quotes = [SELECT Id FROM Quote WHERE OpportunityId IN :oppIds];
+
+    if (!quotes.isEmpty()) {
+        for (Opportunity opp : Trigger.old) {
+            opp.addError('You cannot delete this Opportunity because it has related Quotes.');
+        }
+    }
+}
