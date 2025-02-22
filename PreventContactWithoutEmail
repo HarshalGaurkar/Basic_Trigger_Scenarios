@@ -1,0 +1,13 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case:  A business wants to restric the user to create a contact on run time is email is missing.
+*/
+
+trigger PreventContactWithoutEmail on Contact (before insert) {
+    for (Contact con : Trigger.new) {
+        if (con.Email == null) {
+            con.addError('Email is required for contact creation.');
+        }
+    }
+}
