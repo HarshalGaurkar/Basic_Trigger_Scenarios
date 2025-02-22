@@ -1,0 +1,14 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: If the Revenue__c of an Opportunity is less than the Expected_Revenue__c, the stage should not be allowed to progress.
+*/
+
+trigger PreventStageChangeLowRevenue on Opportunity (before update) {
+    for (Opportunity opp : Trigger.new) {
+        Opportunity oldOpp = Trigger.oldMap.get(opp.Id);
+        if (opp.Revenue__c < opp.Expected_Revenue__c && opp.StageName != oldOpp.StageName) {
+            opp.addError('Stage cannot be changed because revenue is lower than expected.');
+        }
+    }
+}
