@@ -1,0 +1,13 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case:  A business wants to assign specific queue to lead whos Industry is Technology
+*/
+
+trigger AssignLeadQueue on Lead (before insert) {
+    for (Lead lead : Trigger.new) {
+        if (lead.Industry == 'Technology') {
+            lead.OwnerId = '00G5g00000ABC123'; // Queue ID
+        }
+    }
+}
