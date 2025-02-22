@@ -1,0 +1,15 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: If an email sent to a contact bounces, the contact's Status__c field should be updated to reflect that the email is invalid.
+*/
+
+
+trigger UpdateContactStatusOnEmailBounce on Contact (after update) {
+    for (Contact con : Trigger.new) {
+        Contact oldCon = Trigger.oldMap.get(con.Id);
+        if (String.isNotBlank(con.EmailBouncedReason) && String.isBlank(oldCon.EmailBouncedReason)) {
+            con.Status__c = 'Email Bounced';
+        }
+    }
+}
