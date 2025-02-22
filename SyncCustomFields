@@ -1,0 +1,22 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: If a related object (e.g., Account) is updated, a custom field in a child object (e.g., Contact) should be updated as well.
+*/
+
+trigger SyncCustomFields on Account (after update) {
+    List<Contact> contactsToUpdate = new List<Contact>();
+
+    for (Account acc : Trigger.new) {
+        if (acc.Custom_Field__c != Trigger.oldMap.get(acc.Id).Custom_Field__c) {
+            for (Contact con : [SELECT Id, Custom_Field__c FROM Contact WHERE AccountId = :acc.Id]) {
+                con.Custom_Field__c = acc.Custom_Field__c;
+                contactsToUpdate.add(con);
+            }
+        }
+    }
+
+    if (!contactsToUpdate.isEmpty()) {
+        update contactsToUpdate;
+    }
+}
