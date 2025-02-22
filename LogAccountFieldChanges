@@ -1,0 +1,24 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case:  A business wants to store the old value of field and new value of the field for tracking purpose.
+*/
+
+trigger LogAccountFieldChanges on Account (after update) {
+    List<Field_Change__c> logs = new List<Field_Change__c>();
+
+    for (Account acc : Trigger.new) {
+        Account oldAcc = Trigger.oldMap.get(acc.Id);
+        if (acc.Name != oldAcc.Name) {
+            logs.add(new Field_Change__c(
+                Object_Name__c = 'Account',
+                Record_Id__c = acc.Id,
+                Old_Value__c = oldAcc.Name,
+                New_Value__c = acc.Name
+            ));
+        }
+    }
+    if (!logs.isEmpty()) {
+        insert logs;
+    }
+}
