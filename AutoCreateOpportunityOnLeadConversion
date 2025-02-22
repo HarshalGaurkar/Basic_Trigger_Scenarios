@@ -1,0 +1,25 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: When a Lead is converted, an Opportunity should be automatically created if one does not exist.
+*/
+
+trigger AutoCreateOpportunityOnLeadConversion on Lead (after update) {
+    List<Opportunity> opps = new List<Opportunity>();
+
+    for (Lead ld : Trigger.new) {
+        if (ld.IsConverted && !Trigger.oldMap.get(ld.Id).IsConverted && ld.ConvertedOpportunityId == null) {
+            Opportunity opp = new Opportunity(
+                Name = ld.Company + ' Opportunity',
+                CloseDate = Date.today().addDays(30),
+                StageName = 'Prospecting',
+                AccountId = ld.ConvertedAccountId
+            );
+            opps.add(opp);
+        }
+    }
+
+    if (!opps.isEmpty()) {
+        insert opps;
+    }
+}
