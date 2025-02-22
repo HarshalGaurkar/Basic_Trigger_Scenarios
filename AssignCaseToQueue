@@ -1,0 +1,16 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: Cases should be assigned to the appropriate support queue based on the Product__c field
+*/
+
+
+trigger AssignCaseToQueue on Case (before insert, before update) {
+    for (Case cs : Trigger.new) {
+        if (cs.Product__c == 'Software') {
+            cs.OwnerId = '00G5g00000ABC123'; // Software Support Queue ID
+        } else if (cs.Product__c == 'Hardware') {
+            cs.OwnerId = '00G5g00000DEF456'; // Hardware Support Queue ID
+        }
+    }
+}
