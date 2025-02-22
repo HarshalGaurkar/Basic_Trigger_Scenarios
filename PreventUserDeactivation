@@ -1,0 +1,16 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: A user should not be deactivated if they own open opportunities.
+*/
+
+trigger PreventUserDeactivation on User (before update) {
+    for (User usr : Trigger.new) {
+        if (!usr.IsActive) {
+            Integer openOpps = [SELECT COUNT() FROM Opportunity WHERE OwnerId = :usr.Id AND StageName != 'Closed Won' AND StageName != 'Closed Lost'];
+            if (openOpps > 0) {
+                usr.addError('This user cannot be deactivated because they own open Opportunities.');
+            }
+        }
+    }
+}
