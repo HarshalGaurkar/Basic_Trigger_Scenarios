@@ -1,0 +1,14 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: An Active account should not allow its primary contact to be changed.
+*/
+
+trigger RestrictPrimaryContactChange on Account (before update) {
+    for (Account acc : Trigger.new) {
+        Account oldAcc = Trigger.oldMap.get(acc.Id);
+        if (acc.Status__c == 'Active' && acc.Primary_Contact__c != oldAcc.Primary_Contact__c) {
+            acc.addError('Primary Contact cannot be changed for an Active Account.');
+        }
+    }
+}
