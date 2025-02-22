@@ -1,0 +1,11 @@
+/*
+Developer_Name: Harshal Gaurkar
+Date: 22/02/2025
+Use_Case: A business want that no one delete the task record from any object
+*/
+
+trigger PreventTaskDeletion on Task (before delete) {
+    for (Task t : Trigger.old) {
+        t.addError('Tasks cannot be deleted.');
+    }
+}
